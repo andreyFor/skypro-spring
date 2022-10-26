@@ -1,39 +1,58 @@
 
 import org.springframework.stereotype.Service;
+import pro.sky.skyprospring.ValidatorService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
-    List<Employee> arr = new ArrayList<>();
+    public static final int LIMIT = 10;
 
-    public String getMaxDepartmentSalary(int department) {
-        Optional<Employee> employee = arr.stream()
-                .filter(man -> man.getDepartment() == (department))
-                .max(Comparator.comparing(Employee::getSalaryInfo));
-        return employee.toString();
+    private final Map<String, Employee> employees = new HashMap<>();
+    private final ValidatorService validatorService;
+
+    public EmployeeService(ValidatorService validatorService) {
+        this.validatorService = validatorService;
     }
 
-    public String getMinDepartmentSalary(int department) {
-        Optional<Employee> employee = arr.stream()
-                .filter(man -> man.getDepartment() == (department))
-                .min(Comparator.comparing(Employee::getSalaryInfo));
-        return employee.toString();
+    private String getKey(String name, String surname) {
+        return name + "|" + surname;
     }
 
-
-    public String getAllDepartmentEmployee(int department) {
-        List<Employee> employee = arr.stream()
-                .filter(man -> man.getDepartment() == (department))
-                .collect(Collectors.toList());
-        return employee.toString();
+    public Employee add(String name, String surname, int department, double salary) {
+        Employee employee = new Employee(
+                validatorService.validateName(name),
+                validatorService.validateSureName(surname),
+                department,
+                salary);
+        String key = getKey(name, surname);
+        if (employees.containsKey(key)) {
+            throw new EmployeeAlreadyAddedException();
+        }
+        if (employees.size() < LIMIT) {
+            employees.put(key, employee);
+            return employee;
+        }
+        throw new EmployeeStorageIsFullException();
     }
 
-    public String getAllEmployeers() {
+    public Employee remove(String name, String surname) {
+        String key = getKey(name, surname);
+        if (!employees.containsKey(key)) {
+            throw new EmployeeAlreadyAddedException();
+        }
+        return employees.get(key);
+    }
+    public Employee find(String name, String surname) {
+        String key = getKey(name, surname);
+        if (!employees.containsKey(key)) {
+            throw new EmployeeAlreadyAddedException();
+        }
+        return employees.get(key);
+    }
 
-        List<Employee> employee = arr.stream()
-                .sorted().collect(Collectors.toList());
-        return employee.toString();
+    public List<Employee> getAll() {
+        return new ArrayList<>(employees.values());
     }
 }
+
