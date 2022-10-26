@@ -1,59 +1,62 @@
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Employee {
-    private String fullName;
+    @JsonProperty("firstName")
+    private String firstName;
+
+    @JsonProperty("lastName")
+    private String lastName;
+
     private int department;
     private double salary;
-    private int id;
 
-    public Employee(String fullName, int department, double salary) {
-        this.fullName = fullName;
+    public Employee(String firstName, String lastName, int department, double salary) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.department = department;
         this.salary = salary;
     }
-    public String getFullName() {
-        return fullName;
+
+    public String getFirstName() {
+        return firstName;
     }
+
+    public String getLastName() {
+        return lastName;
+    }
+
     public int getDepartment() {
         return department;
     }
-    public double getSalaryInfo() {
+
+    public double getSalary() {
         return salary;
     }
-    public int getId() {
-        return id;
-    }
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-    public void setDepartment(int department) {
-        this.department = department;
-    }
-    public void setSalary(double salary) {
-        this.salary = salary;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return department == employee.department && Double.compare(employee.salary, salary) == 0 && id == employee.id && Objects.equals(fullName, employee.fullName);
+        return department == employee.department && Double.compare(employee.salary, salary) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName, department, salary, id);
+        return Objects.hash(firstName,lastName,department,salary);
     }
 
     @Override
     public String toString() {
         return "Employee{" +
-                "fullName='" + fullName + '\'' +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", department=" + department +
                 ", salary=" + salary +
                 '}';
     }
 }
-//11111
+
+

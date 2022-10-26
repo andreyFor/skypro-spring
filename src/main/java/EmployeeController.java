@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public class EmployeeController {
     public final EmployeeService employeeService;
@@ -12,40 +14,29 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping("/department")
-    public String hello() {
-        return "<span><b>Welcome to Calculator!</b><span><br>";
-    }
-    @GetMapping(path = "/department/max-salary")
-    public String maxSalary(@RequestParam("departmentId") int department) throws Exception {
-        if (department <= 5 && department > 0) {
-            return employeeService.getMaxDepartmentSalary(department);
-        } else {
-            throw new Exception("Такого отдела не существует");
-        }
+    @GetMapping(path = "/add")
+   public Employee add (@RequestParam("firstName")String name,
+    @RequestParam ("lastName")String surname,
+    @RequestParam ("department") int department,
+    @RequestParam double salary) {
+        return employeeService.add(name, surname, department, salary);
     }
 
-    @GetMapping(path = "/department/min-salary")
-    public String minSalary(@RequestParam("departmentId") int department) throws Exception {
-        if (department <= 5 && department > 0) {
-            return employeeService.getMinDepartmentSalary(department);
-        } else {
-            throw new Exception("Такого отдела не существует");
-        }
+    @GetMapping(path = "/remove")
+    public Employee remove(@RequestParam ("firstName")String name,
+    @RequestParam ("lastName")String surname) {
+        return employeeService.remove(name, surname);
     }
 
-    @GetMapping(value = "", params = "/department/all?departmentId=5")
-    public String allDepartment(@RequestParam("departmentId") int department) throws Exception {
-        if (department <= 5 && department > 0) {
-            return employeeService.getAllDepartmentEmployee(department);
-        } else {
-            throw new Exception("Такого отдела не существует");
-        }
+    @GetMapping(value = "/find")
+    public Employee find (@RequestParam ("firstName")String name,
+                           @RequestParam ("lastName")String surname) {
+        return employeeService.find(name, surname);
     }
 
-    @GetMapping("/department/all")
-    public String allEmployeers() {
-        return employeeService.getAllEmployeers();
+    @GetMapping("/all")
+    public List<Employee> getAll(){
+        return employeeService.getAll();
     }
 }
 //111
