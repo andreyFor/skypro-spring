@@ -1,24 +1,30 @@
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import pro.sky.skyprospring.ValidatorService;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class EmployeeService {
     public static final int LIMIT = 10;
 
     private final Map<String, Employee> employees = new HashMap<>();
+    private final ValidatorService validatorService;
+
+    public EmployeeService(ValidatorService validatorService) {
+        this.validatorService = validatorService;
+    }
 
     private String getKey(String name, String surname) {
         return name + "|" + surname;
     }
 
     public Employee add(String name, String surname, int department, double salary) {
-        Employee employee = new Employee(name, surname, department, salary);
+        Employee employee = new Employee(
+                validatorService.validateName(name),
+                validatorService.validateSureName(surname),
+                department,
+                salary);
         String key = getKey(name, surname);
         if (employees.containsKey(key)) {
             throw new EmployeeAlreadyAddedException();
